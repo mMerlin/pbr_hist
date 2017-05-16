@@ -29,11 +29,11 @@ class MygasflowsController extends Controller
 	 * @param int $hrs default 3. number of hours of data to view. (only 3 or 24 right now)
 	 *
 	 */
-	public function index($hrs=3) {	
+	public function index($hrs=3) {
 
 	    //dd($hrs);
 
-		// the deviceid should not be blank or bogus as 
+		// the deviceid should not be blank or bogus as
 		// it is from the user record enforced with a foreign key constraint
 
 		$id = Auth::user()->deviceid;
@@ -43,10 +43,14 @@ class MygasflowsController extends Controller
 		$bioreactor = $this->getBioreactorFromId($id);
 		//dd($bioreactor);
 
-		// load the temperature data for this site
+		// load the gas flow data for this site
 		// returns recorded_on date of last (most recent) record
 
 		$end_datetime = $this->getGasflowData($id, $hrs);
+		if (is_null($this->gasflows))
+		{
+		 $this->gasflows = array();
+		}
 
 		// put the data in the correct form for the charts JS library
 		// generate an x and y array
@@ -59,14 +63,13 @@ class MygasflowsController extends Controller
 		// pass data it to the view
 
 	    return view('GasFlows.mygasflows', ['route' => 'mygasflows',
-	                                'header_title'	=> 'My BioRector Gas Flows ',
 		                             'id'				=> $id,
 									 'bioreactor'		=> $bioreactor,
 									 'end_datetime'     => $end_datetime->toDateTimeString(),
 									 'x_gasflow_data'	=> $gasflow_axis_data['x_data'],
 									 'y_gasflow_data'	=> $gasflow_axis_data['y_data'],
 									 'dbdata'			=> $this->gasflows
-									]);	
+									]);
 
     }
 

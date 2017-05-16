@@ -27,9 +27,9 @@ class MybioController extends Controller
 	 *
 	 *
 	 */
-	public function index() {	
+	public function index() {
 
-		// the deviceid should not be blank or bogus as 
+		// the deviceid should not be blank or bogus as
 		// it is from the user record enforced with a foreign key constraint
 
 		$id = Auth::user()->deviceid;
@@ -73,7 +73,6 @@ class MybioController extends Controller
 
 	    return view('MyBio.mybio', ['route' => 'mybio',
 		                             'id'				=> $id,
-	                                 'header_title'	=> 'My BioReactor Status',
 									 'bioreactor'		=> $bioreactor,
 									 'x_temperature_data'	=> $temp_axis_data['x_data'],
 									 'y_temperature_data'	=> $temp_axis_data['y_data'],
@@ -82,7 +81,7 @@ class MybioController extends Controller
 									 'x_gasflow_data'	=> $gasflow_axis_data['x_data'],
 									 'y_gasflow_data'	=> $gasflow_axis_data['y_data'],
 
-									]);	
+									]);
 
 	}
 }

@@ -13,7 +13,7 @@
 		<li class="active"><a data-toggle="pill" href="#gasflow_graph">Graph</a></li>
 		<li><a data-toggle="pill" href="#gasflow_list">Data Point List</a></li>
 	</ul>
- 
+
 	<div class="tab-content">
 
 		<div id="gasflow_graph" class="tab-pane fade in active">
@@ -24,8 +24,8 @@
 			</div>
 		</div>
 		<div id="gasflow_list" class="tab-pane fade">
-			<div style="height:3px"></div>	
-			<div class="table table-condensed table-responsive" style='overflow-y:scroll;height:275px'>          
+			<div style="height:3px"></div>
+			<div class="table table-condensed table-responsive" style='overflow-y:scroll;height:275px'>
 				<table class="table">
 					<thead>
 						<tr class="info">
@@ -46,9 +46,9 @@
 		 </div>
 	</div>
 
-</div> 
-</div> 
-</div> 
+</div>
+</div>
+</div>
 
 @stop
 
@@ -78,6 +78,8 @@
 	Chart.defaults.global.responsive = true;
 	Chart.defaults.global.scaleLineColor = "black";
 	Chart.defaults.global.scaleFontSize = 12;
+	Chart.defaults.global.scaleBeginAtZero= true;
+
 
 	var ctx = document.getElementById("gasflow_canvas").getContext("2d");
 
@@ -90,4 +92,3 @@
   </script>
 
 @stop
-

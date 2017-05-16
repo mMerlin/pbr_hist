@@ -35,7 +35,7 @@
       <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
-        <span class="icon-bar"></span>                        
+        <span class="icon-bar"></span>
       </button>
       <a class="navbar-brand" style="padding-top:0.5em" href="http://www.solarbiocells.com"><img class="img-rounded" src="/SolarBioCells_Logo_V1.png" alt="SolarBioCells.com" style="width:80px;margin:0;padding:0"></a>
     </div>
@@ -44,6 +44,10 @@
 	    @if (!Auth::guest())
          <li @if ( isset($route) && $route == "mybio") class="active" @endif><a href="{{ url('/mybio') }}">My BioReactor</a></li>
          <li @if ( isset($route) && $route == "global") class="active" @endif><a href="{{ url('/global') }}">Global</a></li>
+			@if (Auth::user()->isadmin)
+	         <li @if ( isset($route) && $route == "users") class="active" @endif><a href="{{ url('/users') }}">Users</a></li>
+	         <li @if ( isset($route) && $route == "bioreactors") class="active" @endif><a href="{{ url('/bioreactors') }}">Bioreactors</a></li>
+ 			@endif
 		@endif
         <li @if ( isset($route) && $route == "about") class="active" @endif><a href="{{ url('/about') }}">About</a></li>
       </ul>
@@ -55,9 +59,10 @@
         @else
          <li class="dropdown">
           <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
-                                {{ Auth::user()->name }} <span class="caret"></span></a>
+                                {{ Auth::user()->name }}<span class="caret"></span></a>
           <ul class="dropdown-menu" role="menu">
            <li><a href="{{ url('/logout') }}"><i class="fa fa-btn fa-sign-out"></i>Logout</a></li>
+           <li><a href="{{ url('/password') }}"><i class="fa fa-btn fa-lock"></i>Change Password</a></li>
           </ul>
          </li>
         @endif

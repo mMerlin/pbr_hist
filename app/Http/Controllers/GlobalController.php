@@ -31,7 +31,7 @@ class GlobalController extends Controller
 	 *
 	 *
 	 */
-	public function getjson() {	
+	public function getjson() {
 
 		// get all the bioreactors to show on the map
 
@@ -48,7 +48,7 @@ class GlobalController extends Controller
 	 * @TODO Add filter to get rid of inactive Bioreactors
 	 *
 	 */
-	public function index() {	
+	public function index() {
 
 		// get all the bioreactors to show on the map
 
@@ -57,9 +57,8 @@ class GlobalController extends Controller
 		//dd($bioreactors->toJson());
 
 	    return view('Global.index', ['route'			=> 'global',
-		                             'header_title'		=> 'Global BioReactor Status',
-									 'dbdata'			=> $bioreactors
-									]);	
+		                             'dbdata'			=> $bioreactors
+									]);
 	}
 
 
@@ -70,11 +69,11 @@ class GlobalController extends Controller
 	 * @param string $id = deviceid of the bioreactor ex. 00001
 	 *
 	 */
-	public function show($id) {	
+	public function show($id) {
 
 		$bioreactor = $this->getBioreactorFromId($id);
 		//dd($bioreactor);
-	
+
 		// get the temperature data from the database for this location
 		// the datetime of the last (most recent) record is returned.
 		// If no records then the current datetime us returned
@@ -113,7 +112,6 @@ class GlobalController extends Controller
 
 	    return view('Global.show', [ 'route'			=> 'single',
 		                             'id'				=> $id,
-	                                 'header_title'		=> 'Single BioReactor Status',
 									 'bioreactor'		=> $bioreactor,
  									 'end_datetime'     => $end_datetime->toDateTimeString(),
 									 'x_temperature_data'	=> $temp_axis_data['x_data'],
@@ -123,7 +121,7 @@ class GlobalController extends Controller
 									 'x_gasflow_data'	=> $gasflow_axis_data['x_data'],
 									 'y_gasflow_data'	=> $gasflow_axis_data['y_data'],
 
-									 ]);	
+									 ]);
 	}
 
 }

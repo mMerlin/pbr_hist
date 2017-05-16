@@ -29,11 +29,11 @@ class MytemperaturesController extends Controller
 	 * @param int $hrs default 3. number of hours of data to view ( 3 or 24 )
 	 *
 	 */
-	public function index($hrs=3) {	
+	public function index($hrs=3) {
 
 	    //dd($hrs);
 
-		// the deviceid should not be blank or bogus as 
+		// the deviceid should not be blank or bogus as
 		// it is from the user record enforced with a foreign key constraint
 
 		$id = Auth::user()->deviceid;
@@ -47,6 +47,10 @@ class MytemperaturesController extends Controller
 		// returns recorded_on date of last (most recent) record
 
 		$end_datetime = $this->getTemperatureData($id, $hrs);
+		if (is_null($this->temperatures))
+		{
+		 $this->temperatures = array();
+		}
 
 		// put the data in the correct form for the charts JS library
 		// generate an x and y array
@@ -59,15 +63,37 @@ class MytemperaturesController extends Controller
 		// pass data it to the view
 
 	    return view('Temperatures.mytemperatures', ['route' => 'mytemperatures',
-	                                'header_title'	=> 'My BioRector Temperatures ',
 		                             'id'				=> $id,
 									 'bioreactor'		=> $bioreactor,
 									 'end_datetime'     => $end_datetime->toDateTimeString(),
 									 'x_temperature_data'	=> $axis_data['x_data'],
 									 'y_temperature_data'	=> $axis_data['y_data'],
 									 'dbdata'			=> $this->temperatures
-									]);	
+									]);
 
     }
+
+	public function generateCSVDownload($hrs=3) {
+
+	    //dd($hrs);
+
+		// the deviceid should not be blank or bogus as
+    // it is from the user record enforced with a foreign key constraint
+
+		$id = Auth::user()->deviceid;
+		//dd($id);
+
+		// load the record from the table
+		$bioreactor = $this->getBioreactorFromId($id);
+		//dd($bioreactor);
+
+		// load the temperature data for this site
+		// returns recorded_on date of last (most recent) record
+
+		$end_datetime = $this->getTemperatureData($id, $hrs);
+
+
+	}
+	//return response()->download($pathToFile, $name, $headers);
 
 }

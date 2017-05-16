@@ -17,6 +17,17 @@ use Carbon\Carbon;
 
 class ApiController extends Controller
 {
+    /**
+     * Create a new controller instance.
+	 *  Register with the Auth so users must be logged in to access
+     *
+     * @return void
+     */
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
+
 
 	/**
 	*  Process request for a data dump of json results back
@@ -27,43 +38,45 @@ class ApiController extends Controller
 	* In development. DO NOT USE
 	*/
 	public function api(Request $request) {
-	
+
+	dd('In development');
+
 		$temp_data = array( [
-			'deviceid'	=> '34234', 
-			'temp'		=>	'21.012', 
+			'deviceid'	=> '34234',
+			'temp'		=>	'21.012',
 			'date'		=>	'2016-01-23 12:34:00'
 			],
 			[
-			'deviceid'	=> '34234', 
-			'temp'		=>	'21.112', 
+			'deviceid'	=> '34234',
+			'temp'		=>	'21.112',
 			'date'		=>	'2016-01-23 12:35:00'
 			]
 			);
 
 		$light_data = array( [
-			'deviceid'	=> '34234', 
-			'light'		=>	'21.012', 
+			'deviceid'	=> '34234',
+			'light'		=>	'21.012',
 			'date'		=>	'2016-01-23 12:34:00'
 			],
 			[
-			'deviceid'	=> '34234', 
-			'light'		=>	'21.112', 
+			'deviceid'	=> '34234',
+			'light'		=>	'21.112',
 			'date'		=>	'2016-01-23 12:35:00'
 			]
 			);
 
 		$flow_data = array( [
-			'deviceid'	=> '34234', 
-			'flow'		=>	'21.012', 
+			'deviceid'	=> '34234',
+			'flow'		=>	'21.012',
 			'date'		=>	'2016-01-23 12:34:00'
 			],
 			[
-			'deviceid'	=> '34234', 
-			'flow'		=>	'21.112', 
+			'deviceid'	=> '34234',
+			'flow'		=>	'21.112',
 			'date'		=>	'2016-01-23 12:35:00'
 			]
 			);
-		
+
 
 		//dd (Request::input('dtype'));
 

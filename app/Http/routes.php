@@ -1,13 +1,5 @@
 <?php
 
-//use App\User;
-//use App\Bioreactor;
-//use App\Temperature;
-//use App\Lightreading;
-//use App\Gasflow;
-
-//use Illuminate\Http\Request;
-
 /*
 |--------------------------------------------------------------------------
 | Routes File
@@ -31,6 +23,7 @@ Route::get('/addusers',			'TestDataController@addusers');
 
 
 Route::get('/api',				'ApiController@api');
+
 
 /*
 |--------------------------------------------------------------------------
@@ -58,6 +51,30 @@ Route::group(['middleware' => 'web'], function () {
     Route::get('/mygasflows/{hrs}',		'MygasflowsController@index' );
     Route::get('/mygasflows',			'MygasflowsController@index' );
 
+    Route::get('/password',				'PasswordController@show' );
+    Route::post('/password',			'PasswordController@update' );
+
 	Route::get('/about',				'PagesController@about' );
+    Route::post('/export',				'ExportController@export' );
+
+
+	// All the routes below this point are only for admins
+
+    Route::get('/users',				'UserController@index' );
+    Route::get('/users/excel',			'UserController@excel' );
+    Route::get('/user/{id}',			'UserController@show' );
+    Route::post('/user/{user}',			'UserController@update' );
+    Route::get('/user',					'UserController@create' );
+    Route::post('/user',				'UserController@update' );
+    Route::get('/user/delete/{id}',		'UserController@delete' );
+
+    Route::get('/bioreactors',				'BioreactorController@index' );
+    Route::get('/bioreactors/excel',		'BioreactorController@excel' );
+    Route::get('/bioreactor/{id}',			'BioreactorController@show' );
+    Route::post('/bioreactor/{bioreactor}',	'BioreactorController@update' );
+    Route::get('/bioreactor',				'BioreactorController@create' );
+    Route::post('/bioreactor',				'BioreactorController@update' );
+    Route::get('/bioreactor/delete/{id}',	'BioreactorController@delete' );
+
 
 });

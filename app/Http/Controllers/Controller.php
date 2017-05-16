@@ -7,6 +7,7 @@ use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use App;
+use Lang;
 
 use App\Bioreactor;
 use App\Temperature;
@@ -43,14 +44,14 @@ class Controller extends BaseController
 
     /**
      * Read the Bioreactor record from the table based on the deviceid
-	 * parameter. The record is stored in the class as well as being 
+	 * parameter. The record is stored in the class as well as being
 	 * returned
 	 *
      * @param string $id The deviceid ex. '00002'
 	 *
-	 * @throws Exception if no record exists. Not supposed to happen.  
+	 * @throws Exception if no record exists. Not supposed to happen.
 	 *
-     * @return Bioreactor 
+     * @return Bioreactor
      */
 	public function getBioreactorFromId($id) {
 
@@ -62,7 +63,7 @@ class Controller extends BaseController
 			$this->bioreactor = Bioreactor::where('deviceid', '=', $id)->firstOrFail();
 		}
 		catch (\Exception $e) {
-			$message = 'Sorry! Invalid deviceid';
+			$message = Lang::get('export.invalid_deviceid');
 			dd($message);
 			//return Redirect::to('error')->with('message', $message);
 		}
@@ -87,7 +88,7 @@ class Controller extends BaseController
 		// using raw call to the DB. I can't see how to do it using Eloquent
 		// so going back to basics.
 		// truncates all the recorded_on details down to just the hour.
-		// In other words we are summarizing the results down to the average 
+		// In other words we are summarizing the results down to the average
 		// over the hour.
 		$r=DB::table('temperatures')
 			->select('deviceid', 'recorded_on',
@@ -111,7 +112,7 @@ class Controller extends BaseController
 		//dd($hr_time);
 
 		// the all_day array is an array of arrays. this is the format that we can use
-		// to backfill the results into the eloquent format using the hydrate call 
+		// to backfill the results into the eloquent format using the hydrate call
 		for ( $i=0; $i < 24; $i++) {
 			// for each hour, make an array holding the results
 			$row = ['deviceid'=>$deviceid, 'hrs'=> 0, 'temperature'=>'0.0', 'recorded_on'=>$hr_time->toDateTimeString()];
@@ -119,7 +120,7 @@ class Controller extends BaseController
 			$hr_time->subhours(1);
 		}
 
-		// overwrite the average temperatures with the data from the actual 
+		// overwrite the average temperatures with the data from the actual
 		// table get. Note we are putting the order to be the most recent hour last.
 		$hr_time = new Carbon($last_time);
 		$hr_time->minute=0;
@@ -133,22 +134,22 @@ class Controller extends BaseController
 
 			//echo "[".$i."]["."[".$index."][".$r[$i]->temperature."]<br>";
 
-			$all_day[$index]['temperature'] = 
+			$all_day[$index]['temperature'] =
 				sprintf("%02.1f",$r[$i]->temperature);
 		}
 		//var_dump($all_day);
 
 
-		// the hydrate function will put our constructed array into the 
-		// Collection format that we need				
+		// the hydrate function will put our constructed array into the
+		// Collection format that we need
 		$this->temperatures = Temperature::hydrate($all_day);
-		
+
 		//dd($this->temperatures);
 	}
 
     /**
      * Read the Temperature records from the table for a specific deviceid
-	 * parameter. The records are stored in the class as well as being 
+	 * parameter. The records are stored in the class as well as being
 	 * returned. The records are loaded in descending order by dateTime
 	 * In other words the most recent first.
 	 *
@@ -157,7 +158,7 @@ class Controller extends BaseController
 	 *
 	 * @throws Exception if SQL select fails (no records is ok though)
 	 *
-     * @return Carbon datetime of last record 
+     * @return Carbon datetime of last record
      */
 	public function getTemperatureData($id, $data_size=3)
 	{
@@ -190,15 +191,6 @@ class Controller extends BaseController
 
 		//dd($last_time->toDateTimeString());
 
-		// GHS just keeping this around to remember to understand lists
-		//$user_info = DB::table('usermetas')
-        //     ->select('browser', DB::raw('count(*) as total'))
-        //     ->groupBy('browser')
-        //     ->lists('total','browser')->all();
-		//somewhere in your view to use a list in a select
-		//$categories = Category::lists('title', 'id');
-		//{{ Form::select('category', $categories) }}
-
 
 		// load the temperature data for this site
 		try {
@@ -211,7 +203,7 @@ class Controller extends BaseController
 			}
 		}
 		catch (\Exception $e) {
-			$message = 'Sorry! No temperature data was found';
+			$message = Lang::get('export.no_temperature_data_found');
 			dd($message);
 			//return Redirect::to('error')->with('message', $message);
 		}
@@ -224,14 +216,14 @@ class Controller extends BaseController
 
     /**
 	 * Builds the x and y temperature graph arrays that are passed to the
-	 * javascript Chart builder. The temperature records must already 
+	 * javascript Chart builder. The temperature records must already
 	 * have been loaded into the temperatures Collection in this class
 	 *
      * @param string $x_axis_style ='default' 'default' is time. 'dot' is a dot
 	 *
 	 * @throws Exception if temperatures have not been loaded from table yet
 	 *
-     * @return Array Mixed  x and y temperature chart data 
+     * @return Array Mixed  x and y temperature chart data
      */
 	public function _buildXYTemperatureData($x_axis_style='default')
 	{
@@ -246,7 +238,7 @@ class Controller extends BaseController
 		// if the temperatures have not been loaded
 		// indicates that gettemperature data has not been called
 		// or failed (no recs)
-		if ( ! is_null ($this->temperatures)) {
+		if ( ! is_null ($this->temperatures) && count($this->temperatures)>0) {
 
 			// reverse the order to make the graph more human like
 			$rev_temps = $this->temperatures->reverse();
@@ -300,7 +292,7 @@ class Controller extends BaseController
 		// using raw call to the DB. I can't see how to do it using Eloquent
 		// so going back to basics.
 		// truncates all the recorded_on details down to just the hour.
-		// In other words we are summarizing the results down to the average 
+		// In other words we are summarizing the results down to the average
 		// over the hour.
 		$r=DB::table('lightreadings')
 			->select('deviceid', 'recorded_on',
@@ -324,7 +316,7 @@ class Controller extends BaseController
 		//dd($hr_time);
 
 		// the all_day array is an array of arrays. this is the format that we can use
-		// to backfill the results into the eloquent format using the hydrate call 
+		// to backfill the results into the eloquent format using the hydrate call
 		for ( $i=0; $i < 24; $i++) {
 			// for each hour, make an array holding the results
 			$row = ['deviceid'=>$deviceid, 'hrs'=> 0, 'lux'=>'0.0', 'recorded_on'=>$hr_time->toDateTimeString()];
@@ -332,7 +324,7 @@ class Controller extends BaseController
 			$hr_time->subhours(1);
 		}
 
-		// overwrite the average lightreadings with the data from the actual 
+		// overwrite the average lightreadings with the data from the actual
 		// table get. Note we are putting the order to be the most recent hour last.
 		$hr_time = new Carbon($last_time);
 		$hr_time->minute=0;
@@ -346,23 +338,23 @@ class Controller extends BaseController
 
 			//echo "[".$i."]["."[".$index."][".$r[$i]->lux."]<br>";
 
-			$all_day[$index]['lux'] = 
+			$all_day[$index]['lux'] =
 				sprintf("%6.1f",$r[$i]->lux);
 		}
 		//dd($all_day);
 
 
-		// the hydrate function will put our constructed array into the 
-		// Collection format that we need				
+		// the hydrate function will put our constructed array into the
+		// Collection format that we need
 		$this->lightreadings = Lightreading::hydrate($all_day);
-		
+
 		//dd($this->lightreadings);
 	}
 
 
     /**
      * Read the Lightreading records from the table for a specific deviceid
-	 * parameter. The records are stored in the class as well as being 
+	 * parameter. The records are stored in the class as well as being
 	 * returned. The records are loaded in descending order by dateTime
 	 * In other words the most recent first.
 	 *
@@ -371,7 +363,7 @@ class Controller extends BaseController
 	 *
 	 * @throws Exception if SQL select fails (no records is ok though)
 	 *
-     * @return Carbon datetime of last record 
+     * @return Carbon datetime of last record
      */
 	public function getLightreadingData($id, $data_size=3)
 	{
@@ -410,7 +402,7 @@ class Controller extends BaseController
 			}
 		}
 		catch (\Exception $e) {
-			$message = 'Sorry! No lightreading data was found';
+			$message = Lang::get('export.no_lightreading_data_found');
 			dd($message);
 			//return Redirect::to('error')->with('message', $message);
 		}
@@ -422,14 +414,14 @@ class Controller extends BaseController
 
     /**
 	 * Builds the x and y Lightreading graph arrays that are passed to the
-	 * javascript Chart builder. The Lightreading records must already 
+	 * javascript Chart builder. The Lightreading records must already
 	 * have been loaded into the Lightreading Collection in this class
 	 *
      * @param string $x_axis_style ='default' 'default' is time. 'dot' is a dot
 	 *
 	 * @throws Exception if Lightreading have not been loaded from table yet
 	 *
-     * @return Array Mixed  x and y Lightreading chart data 
+     * @return Array Mixed  x and y Lightreading chart data
      */
 	public function _buildXYLightreadingData($x_axis_style='default')
 	{
@@ -444,7 +436,7 @@ class Controller extends BaseController
 
 		// abort if the lightreadings have not been loaded
 		// indicates that getlightreading data has not been called
-		if ( ! is_null ($this->lightreadings)) {
+		if ( ! is_null ($this->lightreadings) && count($this->lightreadings)>0) {
 
 			// reverse the order to make the graph more human like
 			$rev_light = $this->lightreadings->reverse();
@@ -497,7 +489,7 @@ class Controller extends BaseController
 		// using raw call to the DB. I can't see how to do it using Eloquent
 		// so going back to basics.
 		// truncates all the recorded_on details down to just the hour.
-		// In other words we are summarizing the results down to the average 
+		// In other words we are summarizing the results down to the average
 		// over the hour.
 		$r=DB::table('gasflows')
 			->select('deviceid', 'recorded_on',
@@ -521,7 +513,7 @@ class Controller extends BaseController
 		//dd($hr_time);
 
 		// the all_day array is an array of arrays. this is the format that we can use
-		// to backfill the results into the eloquent format using the hydrate call 
+		// to backfill the results into the eloquent format using the hydrate call
 		for ( $i=0; $i < 24; $i++) {
 			// for each hour, make an array holding the results
 			$row = ['deviceid'=>$deviceid, 'hrs'=> 0, 'flow'=>0.0, 'recorded_on'=>$hr_time->toDateTimeString()];
@@ -529,7 +521,7 @@ class Controller extends BaseController
 			$hr_time->subhours(1);
 		}
 
-		// overwrite the average Gasflow with the data from the actual 
+		// overwrite the average Gasflow with the data from the actual
 		// table get. Note we are putting the order to be the most recennt hour last.
 		$hr_time = new Carbon($last_time);
 		$hr_time->minute=0;
@@ -543,23 +535,23 @@ class Controller extends BaseController
 
 			//echo "[".$i."]["."[".$index."][".$r[$i]->flow."]<br>";
 
-			$all_day[$index]['flow'] = 
+			$all_day[$index]['flow'] =
 				sprintf("%5.2f",$r[$i]->flow);
 		}
 		//dd($all_day);
 
 
-		// the hydrate function will put our constructed array into the 
-		// Collection format that we need				
+		// the hydrate function will put our constructed array into the
+		// Collection format that we need
 		$this->gasflows = Gasflow::hydrate($all_day);
-		
+
 		//dd($this->gasflows);
 	}
 
 
     /**
      * Read the Gasflow records from the table for a specific deviceid
-	 * parameter. The records are stored in the class as well as being 
+	 * parameter. The records are stored in the class as well as being
 	 * returned. The records are loaded in descending order by dateTime
 	 * In other words the most recent first.
 	 *
@@ -568,7 +560,7 @@ class Controller extends BaseController
 	 *
 	 * @throws Exception if SQL select fails (no records is ok though)
 	 *
-     * @return Carbon datetime of last record 
+     * @return Carbon datetime of last record
      */
 	public function getgasflowData($id, $data_size=3)
 	{
@@ -607,7 +599,7 @@ class Controller extends BaseController
 			}
 		}
 		catch (\Exception $e) {
-			$message = 'Sorry! No gasflow data was found';
+			$message = Lang::get('export.no_gasflow_data_found');
 			dd($message);
 			//return Redirect::to('error')->with('message', $message);
 		}
@@ -619,14 +611,14 @@ class Controller extends BaseController
 
     /**
 	 * Builds the x and y Gasflow graph arrays that are passed to the
-	 * javascript Chart builder. The Gasflow records must already 
+	 * javascript Chart builder. The Gasflow records must already
 	 * have been loaded into the Gasflow Collection in this class
 	 *
      * @param string $x_axis_style ='default' 'default' is time. 'dot' is a dot
 	 *
 	 * @throws Exception if Gasflow have not been loaded from table yet
 	 *
-     * @return Array Mixed  x and y Gasflow chart data 
+     * @return Array Mixed  x and y Gasflow chart data
      */
 	public function _buildXYGasflowData($x_axis_style='default')
 	{
@@ -640,7 +632,7 @@ class Controller extends BaseController
 
 		// abort if the gasflows have not been loaded
 		// indicates that getgasflow data has not been called
-		if ( ! is_null ($this->gasflows)) {
+		if ( ! is_null ($this->gasflows) && count($this->gasflows)>0) {
 
 			// reverse the order to make the graph more human like
 			$rev_gasflow = $this->gasflows->reverse();
