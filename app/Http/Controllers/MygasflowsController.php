@@ -23,7 +23,7 @@ class MygasflowsController extends Controller
         $this->middleware('auth');
     }
 
-	/*
+	/**
 	 * Show the users gas production flows
 	 *
 	 * @param int $hrs default 3. number of hours of data to view. (only 3 or 24 right now)
