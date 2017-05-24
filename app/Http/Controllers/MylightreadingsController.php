@@ -55,7 +55,7 @@ class MylightreadingsController extends Controller
 		// put the data in the correct form for the charts JS library
 		// generate an x and y array
 		// x holds labels as mm:ss format
-		// y holds lux as nnnnn.n format
+		// y holds µmol photons / (m^2 S) as nnnnn.n format
 
 		$axis_data = $this->_buildXYLightreadingData();
 		//dd($axis_data);

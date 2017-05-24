@@ -28,7 +28,7 @@
 						<thead>
 							<tr class="info">
 								<th>Date and Time</th>
-								<th>Lux (Illumination)</th>
+								<th>micro mols photons / (m^s S) (Illumination)</th>
 							</tr>
 						</thead>
 						<tbody>

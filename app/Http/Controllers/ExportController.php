@@ -225,7 +225,7 @@ class ExportController extends Controller
 				$sheet->row(1, array($starting_on,$request->start_date));
 				$sheet->row(2, array($ending_on,$request->end_date));
 
-				$sheet->row(4, array($bioreactor_id_col_title, 'Lux',
+				$sheet->row(4, array($bioreactor_id_col_title, 'µmol photons/(m^2 S)',
 								$date_recorded_col_title,$time_recorded_col_title));
 
 				$sheet->fromArray($lightreadings, null, 'A5', false, false);
