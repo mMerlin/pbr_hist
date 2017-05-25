@@ -6,14 +6,14 @@ use Illuminate\Database\Eloquent\Model;
 
 class Bioreactor extends Model
 {
-	/*
+	/**
 	 * correct id if in the wrong format (or missing)!!
 	 *
-	 *
-	 *
+	 * @param $id device id
+	 * @return String id as 5 digits with leading zeros
 	 */
-	public static function formatDeviceid($id) {
-		return sprintf("%05d", $id);
+	public static function formatDeviceid( $id ) {
+		return sprintf( "%05d", $id );
 	}
 
 	/**
